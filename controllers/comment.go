@@ -10,7 +10,7 @@ func (c *CommentController) Lists() {
 
 func (c *CommentController) Create() {
 
-	c.JsonResult(0, "ok")
+	c.JSONResult(0, "ok")
 }
 
 func (c *CommentController) Index() {

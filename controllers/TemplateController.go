@@ -46,19 +46,19 @@ func (c *TemplateController) isPermission() (error) {
 //获取指定模板信息
 func (c *TemplateController) Get() {
 	if err := c.isPermission() ; err != nil {
-		c.JsonResult(500,err.Error())
+		c.JSONResult(500,err.Error())
 	}
 	templateId, _ := c.GetInt("template_id",0)
 
 	template,err := models.NewTemplate().Find(templateId)
 
 	if err != nil {
-		c.JsonResult(500,"读取模板失败")
+		c.JSONResult(500,"读取模板失败")
 	}
 	if template.IsGlobal == 0 && template.BookId != c.BookId {
-		c.JsonResult(404,"模板不存在或已删除")
+		c.JSONResult(404,"模板不存在或已删除")
 	}
-	c.JsonResult(0,"OK",template)
+	c.JSONResult(0,"OK",template)
 }
 
 //获取模板列表
@@ -86,7 +86,7 @@ func (c *TemplateController) List() {
 //添加模板
 func (c *TemplateController) Add() {
 	if err := c.isPermission() ; err != nil {
-		c.JsonResult(500,err.Error())
+		c.JSONResult(500,err.Error())
 	}
 
 	templateId, _ := c.GetInt("template_id",0)
@@ -95,7 +95,7 @@ func (c *TemplateController) Add() {
 	templateName := c.GetString("template_name","")
 
 	if templateName == "" || strings.Count(templateName,"") > 300 {
-		c.JsonResult(500,"模板名称不能为空且必须小于300字")
+		c.JSONResult(500,"模板名称不能为空且必须小于300字")
 	}
 	template := models.NewTemplate()
 
@@ -103,7 +103,7 @@ func (c *TemplateController) Add() {
 	if templateId > 0 {
 		t,err := template.Find(templateId);
 		if err != nil {
-			c.JsonResult(500,"模板不存在")
+			c.JSONResult(500,"模板不存在")
 		}
 
 		template = t
@@ -124,11 +124,11 @@ func (c *TemplateController) Add() {
 		//如果不是管理员需要判断是否有项目权限
 		rel,err := models.NewRelationship().FindByBookIdAndMemberId(c.BookId,c.Member.MemberId)
 		if err != nil || rel.RoleId == conf.BookObserver {
-			c.JsonResult(403,"没有权限")
+			c.JSONResult(403,"没有权限")
 		}
 		//如果修改的模板不是本人创建的，并且又不是项目创建者则禁止修改
 		if template.MemberId > 0 && template.MemberId != c.Member.MemberId && rel.RoleId != conf.BookFounder {
-			c.JsonResult(403,"没有权限")
+			c.JSONResult(403,"没有权限")
 		}
 	}
 	template.MemberId = c.Member.MemberId
@@ -140,47 +140,47 @@ func (c *TemplateController) Add() {
 	}
 
 	if err := template.Save(cols...); err != nil {
-		c.JsonResult(500,"报错模板失败")
+		c.JSONResult(500,"报错模板失败")
 	}
-	c.JsonResult(0,"OK",template)
+	c.JSONResult(0,"OK",template)
 }
 
 //删除模板
 func (c *TemplateController) Delete() {
 	if err := c.isPermission() ; err != nil {
-		c.JsonResult(500,err.Error())
+		c.JSONResult(500,err.Error())
 	}
 	templateId, _ := c.GetInt("template_id",0)
 
 	template,err := models.NewTemplate().Find(templateId)
 
 	if err != nil {
-		c.JsonResult(404,"模板不存在")
+		c.JSONResult(404,"模板不存在")
 	}
 
 	if c.Member.IsAdministrator() {
 		err := models.NewTemplate().Delete(templateId,0)
 		if err != nil {
-			c.JsonResult(500,"删除失败")
+			c.JSONResult(500,"删除失败")
 		}
 	}else{
 		//如果不是管理员需要判断是否有项目权限
 		rel,err := models.NewRelationship().FindByBookIdAndMemberId(template.BookId,c.Member.MemberId)
 		if err != nil || rel.RoleId == conf.BookObserver {
-			c.JsonResult(403,"没有权限")
+			c.JSONResult(403,"没有权限")
 		}
 
 		//如果是创始人或管理者可以直接删除模板
 		if  rel.RoleId == conf.BookFounder || rel.RoleId == conf.BookAdmin {
 			err := models.NewTemplate().Delete(templateId,0)
 			if err != nil {
-				c.JsonResult(500,"删除失败")
+				c.JSONResult(500,"删除失败")
 			}
 		}
 
 		if err := models.NewTemplate().Delete(templateId,c.Member.MemberId);err != nil {
-			c.JsonResult(500,"删除失败")
+			c.JSONResult(500,"删除失败")
 		}
 	}
-	c.JsonResult(0,"OK")
+	c.JSONResult(0,"OK")
 }

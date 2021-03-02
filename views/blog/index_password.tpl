@@ -96,8 +96,8 @@
 <body>
 <div class="auth_form">
 <div class="shell">
-        <form action="{{urlfor "BlogController.Index" ":id" .Model.BlogId}}" method="post" id="auth_form">
-        <input type="hidden" value="{{.Model.BlogId}}" name="blogId" />
+        <form action="{{urlfor "BlogController.Index" ":id" .Model.BlogID}}" method="post" id="auth_form">
+        <input type="hidden" value="{{.Model.BlogID}}" name="blogID" />
     <div class="tit">
         请输入浏览密码
     </div>

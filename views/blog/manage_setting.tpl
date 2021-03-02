@@ -37,7 +37,7 @@
                 </div>
                 <div class="box-body">
                     <form method="post" id="gloablEditForm" action="{{urlfor "BlogController.ManageSetting"}}">
-                        <input type="hidden" name="id" id="blogId" value="{{.Model.BlogId}}">
+                        <input type="hidden" name="id" id="blogID" value="{{.Model.BlogID}}">
                         <input type="hidden" name="identify" value="{{.Model.BlogIdentify}}">
                         <input type="hidden" name="document_id" value="{{.Model.DocumentId}}">
                         <input type="hidden" name="order_index" value="{{.Model.OrderIndex}}">
@@ -125,7 +125,7 @@
             },success : function ($res) {
                 if($res.errcode === 0) {
                     showSuccess("保存成功");
-                    $("#blogId").val($res.data.blog_id);
+                    $("#blogID").val($res.data.blog_id);
                 }else{
                     showError($res.message);
                 }
