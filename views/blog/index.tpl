@@ -88,7 +88,7 @@
                 <div class="item">修改于</div>
                 <div class="item">{{date .Model.Modified "Y-m-d H:i:s"}}</div>
                 {{if eq .Member.MemberId .Model.MemberId}}
-                    <div class="item"><a href='{{urlfor "BlogController.ManageEdit" ":id" .Model.BlogId}}' title="文章编辑"><i class="fa fa-edit"></i> 编辑</a></div>
+                    <div class="item"><a href='{{urlfor "BlogController.ManageEdit" ":id" .Model.BlogID}}' title="文章编辑"><i class="fa fa-edit"></i> 编辑</a></div>
                 {{end}}
             </div>
         </div>
@@ -108,7 +108,7 @@
             <p>
                 <span>上一篇</span>
             {{if .Previous}}
-                <a href="{{urlfor "BlogController.Index" ":id" .Previous.BlogId}}" title="{{.Previous.BlogTitle}}">{{.Previous.BlogTitle}}
+                <a href="{{urlfor "BlogController.Index" ":id" .Previous.blogID}}" title="{{.Previous.BlogTitle}}">{{.Previous.BlogTitle}}
                 </a>
             {{else}}
                无
@@ -117,7 +117,7 @@
             <p>
                 <span>下一篇</span>
             {{if .Next}}
-                <a href="{{urlfor "BlogController.Index" ":id" .Next.BlogId}}" title="{{.Next.BlogTitle}}">{{.Next.BlogTitle}}</a>
+                <a href="{{urlfor "BlogController.Index" ":id" .Next.blogID}}" title="{{.Next.BlogTitle}}">{{.Next.BlogTitle}}</a>
             {{else}}
                 无
             {{end}}

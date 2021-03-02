@@ -26,7 +26,7 @@ type BaseController struct {
 }
 
 type CookieRemember struct {
-	MemberId int
+	MemberID int
 	Account  string
 	Time     time.Time
 }
@@ -52,7 +52,7 @@ func (c *BaseController) Prepare() {
 		// //如果Cookie中存在登录信息，从cookie中获取用户信息
 		if cookie, ok := c.GetSecureCookie(conf.GetAppKey(), "login"); ok {
 			if err := utils.Decode(cookie, &remember); err == nil {
-				if member, err := models.NewMember().Find(remember.MemberId); err == nil {
+				if member, err := models.NewMember().Find(remember.MemberID); err == nil {
 					c.Member = member
 					c.Data["Member"] = member
 					c.SetMember(*member)
@@ -98,8 +98,8 @@ func (c *BaseController) SetMember(member models.Member) {
 	}
 }
 
-// JsonResult 响应 json 结果
-func (c *BaseController) JsonResult(errCode int, errMsg string, data ...interface{}) {
+// JSONResult 响应 json 结果
+func (c *BaseController) JSONResult(errCode int, errMsg string, data ...interface{}) {
 	jsonData := make(map[string]interface{}, 3)
 
 	jsonData["errcode"] = errCode

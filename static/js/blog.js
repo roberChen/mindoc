@@ -1,7 +1,7 @@
-$(function () {
+$(function() {
     editormd.katexURL = {
-        js  : window.katex.js,
-        css : window.katex.css
+        js: window.katex.js,
+        css: window.katex.css
     };
     window.editor = editormd("docEditor", {
         width: "100%",
@@ -24,7 +24,7 @@ $(function () {
         highlightStyle: window.highlightStyle ? window.highlightStyle : "github",
         tocStartLevel: 1,
         tocm: true,
-        tex:true,
+        tex: true,
         saveHTMLToTextarea: true,
 
         onload: function() {
@@ -33,7 +33,7 @@ $(function () {
                 "Ctrl-S": function(cm) {
                     saveBlog(false);
                 },
-                "Cmd-S": function(cm){
+                "Cmd-S": function(cm) {
                     saveBlog(false);
                 },
                 "Ctrl-A": function(cm) {
@@ -42,7 +42,7 @@ $(function () {
             };
             this.addKeyMap(keyMap);
 
-            uploadImage("docEditor", function ($state, $res) {
+            uploadImage("docEditor", function($state, $res) {
                 console.log("注册上传图片")
                 if ($state === "before") {
                     return layer.load(1, {
@@ -56,18 +56,18 @@ $(function () {
                 }
             });
         },
-        onchange: function () {
+        onchange: function() {
             resetEditorChanged(true);
         }
     });
     /**
      * 实现标题栏操作
      */
-    $("#editormd-tools").on("click", "a[class!='disabled']", function () {
+    $("#editormd-tools").on("click", "a[class!='disabled']", function() {
         var name = $(this).find("i").attr("name");
         if (name === "attachment") {
             $("#uploadAttachModal").modal("show");
-        }else if (name === "save") {
+        } else if (name === "save") {
             saveBlog(false);
         } else if (name === "template") {
             $("#documentTemplateModal").modal("show");
@@ -94,7 +94,7 @@ $(function () {
                 window.editor.focus();
             }
         }
-    }) ;
+    });
 
     /**
      * 保存文章
@@ -105,20 +105,20 @@ $(function () {
         var html = window.editor.getPreviewedHTML();
 
         $.ajax({
-            beforeSend: function () {
+            beforeSend: function() {
                 index = layer.load(1, { shade: [0.1, '#fff'] });
             },
             url: window.editURL,
-            data: { "blogId": window.blogId,"content": content,"htmlContent": html, "cover": $is_cover ? "yes" : "no","version" : window.blogVersion},
+            data: { "blogID": window.blogID, "content": content, "htmlContent": html, "cover": $is_cover ? "yes" : "no", "version": window.blogVersion },
             type: "post",
-            timeout : 30000,
+            timeout: 30000,
             dataType: "json",
-            success: function ($res) {
+            success: function($res) {
                 layer.close(index);
                 if ($res.errcode === 0) {
                     resetEditorChanged(false);
                     window.blogVersion = $res.data.version;
-                } else if($res.errcode === 6005) {
+                } else if ($res.errcode === 6005) {
                     var confirmIndex = layer.confirm('文档已被其他人修改确定覆盖已存在的文档吗？', {
                         btn: ['确定', '取消'] // 按钮
                     }, function() {
@@ -129,9 +129,9 @@ $(function () {
                     layer.msg(res.message);
                 }
             },
-            error : function (XMLHttpRequest, textStatus, errorThrown) {
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
                 layer.close(index);
-                layer.msg("服务器错误：" +  errorThrown);
+                layer.msg("服务器错误：" + errorThrown);
             }
         });
     }
@@ -150,7 +150,7 @@ $(function () {
     /**
      * 打开文档模板
      */
-    $("#documentTemplateModal").on("click", ".section>a[data-type]", function () {
+    $("#documentTemplateModal").on("click", ".section>a[data-type]", function() {
         var $this = $(this).attr("data-type");
         var body = $("#template-" + $this).html();
         if (body) {

@@ -3,19 +3,20 @@ package models
 import (
 	"bytes"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/lifei6671/mindoc/cache"
 	"github.com/lifei6671/mindoc/conf"
 	"github.com/lifei6671/mindoc/utils"
-	"strings"
-	"time"
 )
 
 //博文表
 type Blog struct {
-	BlogId int `orm:"pk;auto;unique;column(blog_id)" json:"blog_id"`
+	BlogID int `orm:"pk;auto;unique;column(blog_id)" json:"blog_id"`
 	//文章标题
 	BlogTitle string `orm:"column(blog_title);size(500)" json:"blog_title"`
 	//文章标识
@@ -35,7 +36,7 @@ type Blog struct {
 	//关联文档的项目标识
 	BookIdentify string `orm:"-" json:"book_identify"`
 	//关联文档的项目ID
-	BookId int `orm:"-" json:"book_id"`
+	BookID int `orm:"-" json:"book_id"`
 	//文章摘要
 	BlogExcerpt string `orm:"column(blog_excerpt);size(1500)" json:"blog_excerpt"`
 	//文章内容
@@ -88,10 +89,10 @@ func NewBlog() *Blog {
 }
 
 //根据文章ID查询文章
-func (b *Blog) Find(blogId int) (*Blog, error) {
+func (b *Blog) Find(blogID int) (*Blog, error) {
 	o := orm.NewOrm()
 
-	err := o.QueryTable(b.TableNameWithPrefix()).Filter("blog_id", blogId).One(b)
+	err := o.QueryTable(b.TableNameWithPrefix()).Filter("blog_id", blogID).One(b)
 	if err != nil {
 		beego.Error("查询文章时失败 -> ", err)
 		return nil, err
@@ -101,10 +102,10 @@ func (b *Blog) Find(blogId int) (*Blog, error) {
 }
 
 //从缓存中读取文章
-func (b *Blog) FindFromCache(blogId int) (blog *Blog, err error) {
-	key := fmt.Sprintf("blog-id-%d", blogId);
+func (b *Blog) FindFromCache(blogID int) (blog *Blog, err error) {
+	key := fmt.Sprintf("blog-id-%d", blogID)
 	var temp Blog
-	err = cache.Get(key, &temp);
+	err = cache.Get(key, &temp)
 	if err == nil {
 		b = &temp
 		b.Link()
@@ -114,7 +115,7 @@ func (b *Blog) FindFromCache(blogId int) (blog *Blog, err error) {
 		beego.Error("读取缓存失败 ->", err)
 	}
 
-	blog, err = b.Find(blogId)
+	blog, err = b.Find(blogID)
 	if err == nil {
 		//默认一个小时
 		if err := cache.Put(key, blog, time.Hour*1); err != nil {
@@ -125,10 +126,10 @@ func (b *Blog) FindFromCache(blogId int) (blog *Blog, err error) {
 }
 
 //查找指定用户的指定文章
-func (b *Blog) FindByIdAndMemberId(blogId, memberId int) (*Blog, error) {
+func (b *Blog) FindByIdAndMemberId(blogID, memberId int) (*Blog, error) {
 	o := orm.NewOrm()
 
-	err := o.QueryTable(b.TableNameWithPrefix()).Filter("blog_id", blogId).Filter("member_id", memberId).One(b)
+	err := o.QueryTable(b.TableNameWithPrefix()).Filter("blog_id", blogID).Filter("member_id", memberId).One(b)
 	if err != nil {
 		beego.Error("查询文章时失败 -> ", err)
 		return nil, err
@@ -168,18 +169,18 @@ func (b *Blog) Link() (*Blog, error) {
 				beego.Error("查询关联文档的项目时出错 ->", err)
 			} else {
 				b.BookIdentify = book.Identify
-				b.BookId = doc.BookId
+				b.BookID = doc.BookId
 			}
 			//处理链接文档存在源文档修改时间的问题
 			if content, err := goquery.NewDocumentFromReader(bytes.NewBufferString(b.BlogRelease)); err == nil {
 				content.Find(".wiki-bottom").Remove()
-				if html,err := content.Html();err == nil {
+				if html, err := content.Html(); err == nil {
 					b.BlogRelease = html
 				} else {
-					beego.Error("处理文章失败 ->",err)
+					beego.Error("处理文章失败 ->", err)
 				}
-			}else {
-				beego.Error("处理文章失败 ->",err)
+			} else {
+				beego.Error("处理文章失败 ->", err)
 			}
 		}
 	}
@@ -223,7 +224,7 @@ func (b *Blog) Save(cols ...string) error {
 	if b.OrderIndex <= 0 {
 		blog := NewBlog()
 		if err := o.QueryTable(blog.TableNameWithPrefix()).OrderBy("-blog_id").Limit(1).One(blog, "blog_id"); err == nil {
-			b.OrderIndex = blog.BlogId + 1;
+			b.OrderIndex = blog.BlogID + 1
 		} else {
 			c, _ := o.QueryTable(b.TableNameWithPrefix()).Count()
 			b.OrderIndex = int(c) + 1
@@ -233,10 +234,10 @@ func (b *Blog) Save(cols ...string) error {
 
 	b.Processor().Version = time.Now().Unix()
 
-	if b.BlogId > 0 {
+	if b.BlogID > 0 {
 		b.Modified = time.Now()
 		_, err = o.Update(b, cols...)
-		key := fmt.Sprintf("blog-id-%d", b.BlogId)
+		key := fmt.Sprintf("blog-id-%d", b.BlogID)
 		cache.Delete(key)
 
 	} else {
@@ -325,10 +326,10 @@ func (b *Blog) FindToPager(pageIndex, pageSize int, memberId int, status string)
 }
 
 //删除文章
-func (b *Blog) Delete(blogId int) error {
+func (b *Blog) Delete(blogID int) error {
 	o := orm.NewOrm()
 
-	_, err := o.QueryTable(b.TableNameWithPrefix()).Filter("blog_id", blogId).Delete()
+	_, err := o.QueryTable(b.TableNameWithPrefix()).Filter("blog_id", blogID).Delete()
 	if err != nil {
 		beego.Error("删除文章失败 ->", err)
 	}
@@ -336,16 +337,16 @@ func (b *Blog) Delete(blogId int) error {
 }
 
 //查询下一篇文章
-func (b *Blog) QueryNext(blogId int) (*Blog, error) {
+func (b *Blog) QueryNext(blogID int) (*Blog, error) {
 	o := orm.NewOrm()
 	blog := NewBlog()
 
-	if err := o.QueryTable(b.TableNameWithPrefix()).Filter("blog_id", blogId).One(blog, "order_index"); err != nil {
+	if err := o.QueryTable(b.TableNameWithPrefix()).Filter("blog_id", blogID).One(blog, "order_index"); err != nil {
 		beego.Error("查询文章时出错 ->", err)
 		return b, err
 	}
 
-	err := o.QueryTable(b.TableNameWithPrefix()).Filter("order_index__gte", blog.OrderIndex).Filter("blog_id__gt", blogId).OrderBy("order_index", "blog_id").One(blog)
+	err := o.QueryTable(b.TableNameWithPrefix()).Filter("order_index__gte", blog.OrderIndex).Filter("blog_id__gt", blogID).OrderBy("order_index", "blog_id").One(blog)
 
 	if err != nil && err != orm.ErrNoRows {
 		beego.Error("查询文章时出错 ->", err)
@@ -354,16 +355,16 @@ func (b *Blog) QueryNext(blogId int) (*Blog, error) {
 }
 
 //查询下一篇文章
-func (b *Blog) QueryPrevious(blogId int) (*Blog, error) {
+func (b *Blog) QueryPrevious(blogID int) (*Blog, error) {
 	o := orm.NewOrm()
 	blog := NewBlog()
 
-	if err := o.QueryTable(b.TableNameWithPrefix()).Filter("blog_id", blogId).One(blog, "order_index"); err != nil {
+	if err := o.QueryTable(b.TableNameWithPrefix()).Filter("blog_id", blogID).One(blog, "order_index"); err != nil {
 		beego.Error("查询文章时出错 ->", err)
 		return b, err
 	}
 
-	err := o.QueryTable(b.TableNameWithPrefix()).Filter("order_index__lte", blog.OrderIndex).Filter("blog_id__lt", blogId).OrderBy("-order_index", "-blog_id").One(blog)
+	err := o.QueryTable(b.TableNameWithPrefix()).Filter("order_index__lte", blog.OrderIndex).Filter("blog_id__lt", blogID).OrderBy("-order_index", "-blog_id").One(blog)
 
 	if err != nil && err != orm.ErrNoRows {
 		beego.Error("查询文章时出错 ->", err)
@@ -379,12 +380,12 @@ func (b *Blog) LinkAttach() (err error) {
 	var attachList []*Attachment
 	//当不是关联文章时，用文章ID去查询附件
 	if b.BlogType != 1 || b.DocumentId <= 0 {
-		_, err = o.QueryTable(NewAttachment().TableNameWithPrefix()).Filter("document_id", b.BlogId).Filter("book_id", 0).All(&attachList)
+		_, err = o.QueryTable(NewAttachment().TableNameWithPrefix()).Filter("document_id", b.BlogID).Filter("book_id", 0).All(&attachList)
 		if err != nil && err != orm.ErrNoRows {
 			beego.Error("查询文章附件时出错 ->", err)
 		}
 	} else {
-		_, err = o.QueryTable(NewAttachment().TableNameWithPrefix()).Filter("document_id", b.DocumentId).Filter("book_id", b.BookId).All(&attachList)
+		_, err = o.QueryTable(NewAttachment().TableNameWithPrefix()).Filter("document_id", b.DocumentId).Filter("book_id", b.BookID).All(&attachList)
 
 		if err != nil && err != orm.ErrNoRows {
 			beego.Error("查询文章附件时出错 ->", err)

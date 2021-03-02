@@ -44,7 +44,7 @@
                         {{range $index,$item := .ModelList}}
                             <div class="item blog-item">
                                 <div class="content">
-                                    <a class="header" href="{{urlfor "BlogController.Index" ":id" $item.BlogId}}" target="_blank">
+                                    <a class="header" href="{{urlfor "BlogController.Index" ":id" $item.BlogID}}" target="_blank">
                                         {{if eq $item.BlogStatus "password"}}
                                         <div class="ui teal label horizontal" data-tooltip="加密">密</div>
                                         {{end}}
@@ -57,9 +57,9 @@
                                         <div>
                                             <div class="ui horizontal small list">
                                                 <div class="item"><i class="fa fa-clock-o"></i> {{date $item.Modified "Y-m-d H:i:s"}}</div>
-                                                <div class="item"><a href="{{urlfor "BlogController.ManageEdit" ":id" $item.BlogId}}" title="文章编辑" target="_blank"><i class="fa fa-edit"></i> 编辑</a></div>
-                                                <div class="item"><a class="delete-btn" title="删除文章" data-id="{{$item.BlogId}}"><i class="fa fa-trash"></i> 删除</a></div>
-                                                <div class="item"><a href="{{urlfor "BlogController.ManageSetting" ":id" $item.BlogId}}" title="文章设置" class="setting-btn"><i class="fa fa-gear"></i> 设置</a></div>
+                                                <div class="item"><a href="{{urlfor "BlogController.ManageEdit" ":id" $item.BlogID}}" title="文章编辑" target="_blank"><i class="fa fa-edit"></i> 编辑</a></div>
+                                                <div class="item"><a class="delete-btn" title="删除文章" data-id="{{$item.BlogID}}"><i class="fa fa-trash"></i> 删除</a></div>
+                                                <div class="item"><a href="{{urlfor "BlogController.ManageSetting" ":id" $item.BlogID}}" title="文章设置" class="setting-btn"><i class="fa fa-gear"></i> 设置</a></div>
                                             </div>
                                         </div>
                                     </div>

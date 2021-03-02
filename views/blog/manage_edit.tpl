@@ -11,12 +11,12 @@
         window.katex = { js: "{{cdnjs "/static/katex/katex"}}",css: "{{cdncss "/static/katex/katex"}}"};
         window.editormdLib = "{{cdnjs "/static/editor.md/lib/"}}";
         window.editor = null;
-        window.editURL = "{{urlfor "BlogController.ManageEdit" "blogId" .Model.BlogId}}";
-        window.imageUploadURL = "{{urlfor "BlogController.Upload" "blogId" .Model.BlogId}}";
+        window.editURL = "{{urlfor "BlogController.ManageEdit" "blogID" .Model.BlogID}}";
+        window.imageUploadURL = "{{urlfor "BlogController.Upload" "blogID" .Model.BlogID}}";
         window.fileUploadURL = "";
-        window.blogId = {{.Model.BlogId}};
+        window.blogID = {{.Model.BlogID}};
         window.blogVersion = {{.Model.Version}};
-        window.removeAttachURL = "{{urlfor "BlogController.RemoveAttachment" ":id" .Model.BlogId}}";
+        window.removeAttachURL = "{{urlfor "BlogController.RemoveAttachment" ":id" .Model.BlogID}}";
         window.highlightStyle = "{{.HighlightStyle}}";
     </script>
     <!-- Bootstrap -->
@@ -234,7 +234,7 @@
                         dnd : true,
                         swf: '{{.BaseUrl}}/static/webuploader/Uploader.swf',
                         server: '{{urlfor "BlogController.Upload"}}',
-                        formData : { "blogId" : {{.Model.BlogId}}},
+                        formData : { "blogID" : {{.Model.BlogID}}},
                         pick: "#filePicker",
                         fileVal : "editormd-file-file",
                         fileSingleSizeLimit: {{.UploadFileSize}},

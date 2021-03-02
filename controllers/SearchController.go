@@ -86,23 +86,23 @@ func (c *SearchController) User() {
 	key := c.Ctx.Input.Param(":key")
 	keyword := strings.TrimSpace(c.GetString("q"))
 	if key == "" || keyword == "" {
-		c.JsonResult(404, "参数错误")
+		c.JSONResult(404, "参数错误")
 	}
 	keyword = sqltil.EscapeLike(keyword)
 
 	book, err := models.NewBookResult().FindByIdentify(key, c.Member.MemberId)
 	if err != nil {
 		if err == models.ErrPermissionDenied {
-			c.JsonResult(403, "没有权限")
+			c.JSONResult(403, "没有权限")
 		}
-		c.JsonResult(500, "项目不存在")
+		c.JSONResult(500, "项目不存在")
 	}
 
 	//members, err := models.NewMemberRelationshipResult().FindNotJoinUsersByAccount(book.BookId, 10, "%"+keyword+"%")
 	members, err := models.NewMemberRelationshipResult().FindNotJoinUsersByAccountOrRealName(book.BookId, 10, "%"+keyword+"%")
 	if err != nil {
 		beego.Error("查询用户列表出错：" + err.Error())
-		c.JsonResult(500, err.Error())
+		c.JSONResult(500, err.Error())
 	}
 	result := models.SelectMemberResult{}
 	items := make([]models.KeyValueItem, 0)
@@ -116,5 +116,5 @@ func (c *SearchController) User() {
 
 	result.Result = items
 
-	c.JsonResult(0, "OK", result)
+	c.JSONResult(0, "OK", result)
 }

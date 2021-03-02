@@ -16,13 +16,13 @@ require (
 	github.com/lifei6671/gocaptcha v0.1.1
 	github.com/mattn/go-sqlite3 v1.9.0
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+	github.com/russross/blackfriday v2.0.0+incompatible
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	golang.org/x/crypto v0.0.0-20200604202706-70a84ac30bf9 // indirect
 	golang.org/x/net v0.0.0-20200602114024-627f9648deb9 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
 	gopkg.in/asn1-ber.v1 v1.0.0-00010101000000-000000000000 // indirect
 	gopkg.in/ldap.v2 v2.5.1
-	gopkg.in/russross/blackfriday.v2 v2.0.0
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 
 )

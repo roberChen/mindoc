@@ -30,11 +30,11 @@
             <div class="manual-list">
             {{range $index,$item := .Lists}}
                 <div class="search-item">
-                    <div class="title">{{if eq $item.BlogStatus "password"}}<span class="label">密</span>{{end}} <a href="{{urlfor "BlogController.Index" ":id" $item.BlogId}}" title="{{$item.BlogTitle}}" target="_blank">{{$item.BlogTitle}}</a> </div>
+                    <div class="title">{{if eq $item.BlogStatus "password"}}<span class="label">密</span>{{end}} <a href="{{urlfor "BlogController.Index" ":id" $item.BlogID}}" title="{{$item.BlogTitle}}" target="_blank">{{$item.BlogTitle}}</a> </div>
                     <div class="description">
                     {{$item.BlogExcerpt}}
                     </div>
-                    {{/*<div class="site">{{urlfor "BlogController.Index" ":id" $item.BlogId}}</div>*/}}
+                    {{/*<div class="site">{{urlfor "BlogController.Index" ":id" $item.BlogID}}</div>*/}}
                     <div class="source">
                         <span class="item">作者：{{$item.CreateName}}</span>
                         <span class="item">更新时间：{{date_format  $item.Modified "2006-01-02 15:04:05"}}</span>
