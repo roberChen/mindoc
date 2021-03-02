@@ -17,12 +17,18 @@ type Daemon struct {
 	errs   chan error
 }
 
+// NewDaemon create new daemon, by default, the service config as follows:
+//
+//		service name: mindocd
+//		display name: MinDoc service
+//
+// the arguments stores all arguments from command line, program name excluded
 func NewDaemon() *Daemon {
 
 	config := &service.Config{
-		Name:             "mindocd",                               //服务显示名称
-		DisplayName:      "MinDoc service",                        //服务名称
-		Description:      "A document online management program.", //服务描述
+		Name:             "mindocd",                               //Required name
+		DisplayName:      "MinDoc service",                        //Display name
+		Description:      "A document online management program.", //Long description
 		WorkingDirectory: conf.WorkingDirectory,
 		Arguments:        os.Args[1:],
 	}
@@ -33,9 +39,11 @@ func NewDaemon() *Daemon {
 	}
 }
 
+// Config returns service config of daemon
 func (d *Daemon) Config() *service.Config {
 	return d.config
 }
+// Start will starts the server
 func (d *Daemon) Start(s service.Service) error {
 
 	go d.Run()
@@ -43,7 +51,6 @@ func (d *Daemon) Start(s service.Service) error {
 }
 
 func (d *Daemon) Run() {
-
 
 	commands.ResolveCommand(d.config.Arguments)
 
@@ -55,7 +62,7 @@ func (d *Daemon) Run() {
 
 	beego.ErrorController(&controllers.ErrorController{})
 
-	f,err := filepath.Abs(os.Args[0])
+	f, err := filepath.Abs(os.Args[0])
 
 	if err != nil {
 		f = os.Args[0]

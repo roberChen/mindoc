@@ -17,7 +17,6 @@ import (
 	beegoCache "github.com/astaxie/beego/cache"
 	_ "github.com/astaxie/beego/cache/memcache"
 	"github.com/astaxie/beego/cache/redis"
-	_ "github.com/astaxie/beego/cache/redis"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	"github.com/howeyc/fsnotify"
@@ -160,28 +159,20 @@ func RegisterLogger(log string) {
 		switch level {
 		case "Emergency":
 			config["level"] = beego.LevelEmergency
-			break
 		case "Alert":
 			config["level"] = beego.LevelAlert
-			break
 		case "Critical":
 			config["level"] = beego.LevelCritical
-			break
 		case "Error":
 			config["level"] = beego.LevelError
-			break
 		case "Warning":
 			config["level"] = beego.LevelWarning
-			break
 		case "Notice":
 			config["level"] = beego.LevelNotice
-			break
 		case "Informational":
 			config["level"] = beego.LevelInformational
-			break
 		case "Debug":
 			config["level"] = beego.LevelDebug
-			break
 		}
 	}
 	b, err := json.Marshal(config)
@@ -195,7 +186,7 @@ func RegisterLogger(log string) {
 	beego.SetLogFuncCall(true)
 }
 
-// RunCommand 注册orm命令行工具
+// RegisterCommand handles `install` & `version` subcommands. 注册orm命令行工具
 func RegisterCommand() {
 
 	if len(os.Args) >= 2 && os.Args[1] == "install" {
@@ -208,7 +199,7 @@ func RegisterCommand() {
 
 }
 
-//注册模板函数
+// RegisterFunction 注册模板函数
 func RegisterFunction() {
 	err := beego.AddFuncMap("config", models.GetOptionValue)
 
@@ -223,15 +214,15 @@ func RegisterFunction() {
 		}
 		//如果没有设置cdn，则使用baseURL拼接
 		if cdn == "" {
-			baseUrl := beego.AppConfig.DefaultString("baseurl", "")
+			baseURL := beego.AppConfig.DefaultString("baseurl", "")
 
-			if strings.HasPrefix(p, "/") && strings.HasSuffix(baseUrl, "/") {
-				return baseUrl + p[1:]
+			if strings.HasPrefix(p, "/") && strings.HasSuffix(baseURL, "/") {
+				return baseURL + p[1:]
 			}
-			if !strings.HasPrefix(p, "/") && !strings.HasSuffix(baseUrl, "/") {
-				return baseUrl + "/" + p
+			if !strings.HasPrefix(p, "/") && !strings.HasSuffix(baseURL, "/") {
+				return baseURL + "/" + p
 			}
-			return baseUrl + p
+			return baseURL + p
 		}
 		if strings.HasPrefix(p, "/") && strings.HasSuffix(cdn, "/") {
 			return cdn + string(p[1:])
@@ -276,7 +267,7 @@ func RegisterFunction() {
 	}
 }
 
-//解析命令
+// ResolveCommand will parse some commands in args list. 解析命令
 func ResolveCommand(args []string) {
 	flagSet := flag.NewFlagSet("MinDoc command: ", flag.ExitOnError)
 	flagSet.StringVar(&conf.ConfigurationFile, "config", "", "MinDoc configuration file.")
@@ -343,7 +334,7 @@ func ResolveCommand(args []string) {
 
 }
 
-//注册缓存管道
+// RegisterCache 注册缓存管道
 func RegisterCache() {
 	isOpenCache := beego.AppConfig.DefaultBool("cache", false)
 	if !isOpenCache {
@@ -359,7 +350,7 @@ func RegisterCache() {
 		}
 		fileCache := beegoCache.NewFileCache()
 
-		fileConfig := make(map[string]string, 0)
+		fileConfig := make(map[string]string)
 
 		fileConfig["CachePath"] = cacheFilePath
 		fileConfig["DirectoryLevel"] = beego.AppConfig.DefaultString("cache_file_dir_level", "2")
@@ -389,15 +380,15 @@ func RegisterCache() {
 		var redisConfig struct {
 			Conn     string `json:"conn"`
 			Password string `json:"password"`
-			DbNum    int    `json:"dbNum"`
+			DBNum    int    `json:"dbNum"`
 		}
-		redisConfig.DbNum = 0
+		redisConfig.DBNum = 0
 		redisConfig.Conn = beego.AppConfig.DefaultString("cache_redis_host", "")
 		if pwd := beego.AppConfig.DefaultString("cache_redis_password", ""); pwd != "" {
 			redisConfig.Password = pwd
 		}
 		if dbNum := beego.AppConfig.DefaultInt("cache_redis_db", 0); dbNum > 0 {
-			redisConfig.DbNum = dbNum
+			redisConfig.DBNum = dbNum
 		}
 
 		bc, err := json.Marshal(&redisConfig)
@@ -442,7 +433,7 @@ func RegisterCache() {
 	beego.Info("缓存初始化完成.")
 }
 
-//自动加载配置文件.修改了监听端口号和数据库配置无法自动生效.
+// RegisterAutoLoadConfig 自动加载配置文件.修改了监听端口号和数据库配置无法自动生效.
 func RegisterAutoLoadConfig() {
 	if conf.AutoLoadDelay > 0 {
 
@@ -483,9 +474,9 @@ func RegisterAutoLoadConfig() {
 	}
 }
 
-//注册错误处理方法.
+// RegisterError 注册错误处理方法.
 func RegisterError() {
-	beego.ErrorHandler("404", func(writer http.ResponseWriter, request *http.Request) {
+	beego.ErrorHandler("404", func(writer http.ResponseWriter, _ /*request*/ *http.Request) {
 		var buf bytes.Buffer
 
 		data := make(map[string]interface{})
@@ -498,7 +489,7 @@ func RegisterError() {
 			_, _ = fmt.Fprint(writer, data["ErrorMessage"])
 		}
 	})
-	beego.ErrorHandler("401", func(writer http.ResponseWriter, request *http.Request) {
+	beego.ErrorHandler("401", func(writer http.ResponseWriter, _ /*request*/ *http.Request) {
 		var buf bytes.Buffer
 
 		data := make(map[string]interface{})
