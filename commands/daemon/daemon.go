@@ -1,3 +1,4 @@
+// Package daemon defines actions a daemon mindoc server has. A mindoc daemon may run as service(start/stop/restart), install and uninstall. 
 package daemon
 
 import (
