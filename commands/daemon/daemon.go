@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 )
 
+// Daemon is a mindoc daemon, which implements service.Interface interface, could Start() and Stop()
 type Daemon struct {
 	config *service.Config
 	errs   chan error

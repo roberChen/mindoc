@@ -279,12 +279,14 @@ func ResolveCommand(args []string) {
 		log.Fatal("解析命令失败 ->", err)
 	}
 
+	// set current directory as working dir as default
 	if conf.WorkingDirectory == "" {
 		if p, err := filepath.Abs(os.Args[0]); err == nil {
 			conf.WorkingDirectory = filepath.Dir(p)
 		}
 	}
 
+	// set ./conf/app.conf as default config file
 	if conf.ConfigurationFile == "" {
 		conf.ConfigurationFile = conf.WorkingDir("conf", "app.conf")
 		config := conf.WorkingDir("conf", "app.conf.example")
@@ -292,10 +294,13 @@ func ResolveCommand(args []string) {
 			_ = filetil.CopyFile(conf.ConfigurationFile, config)
 		}
 	}
+
+	// reading font file
 	if err := gocaptcha.ReadFonts(conf.WorkingDir("static", "fonts"), ".ttf"); err != nil {
 		log.Fatal("读取字体文件时出错 -> ", err)
 	}
 
+	// loading config files
 	if err := beego.LoadAppConfig("ini", conf.ConfigurationFile); err != nil {
 		log.Fatal("An error occurred:", err)
 	}
